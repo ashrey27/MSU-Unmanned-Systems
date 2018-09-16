@@ -1,0 +1,19 @@
+QR Code Reader:
+
+I wish I could impress all of y'all and say that I figured this out on my own, but no,
+
+I literally just followed someone's instructions.
+
+I'm not sure what system we're running this on, I assume its some distro of linux; In this I used Ubuntu 14.04.
+
+
+Instructions: 
+
+Go to:  https://github.com/primetang/qrtools
+
+Using pip will make this process much easier.
+
+Make sure you install all the dependencies listed, and the ZBar Bar Code Reader (I just downloaded the source tarball)
+
+After you have installed qrtools, just run the qr_reader.py file.  You can edit it to run any png or jpg that you have.  
+

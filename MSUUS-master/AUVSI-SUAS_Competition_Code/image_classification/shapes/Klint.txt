@@ -1,0 +1,1 @@
+This folder is the black PNGs used to generate test data. Not sure if completely mapped to the image_gen script.

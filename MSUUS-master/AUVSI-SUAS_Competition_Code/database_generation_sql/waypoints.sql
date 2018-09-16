@@ -1,0 +1,1 @@
+CREATE TABLE `MSUUS`.`waypoints` ( `id` INT(8) NOT NULL AUTO_INCREMENT , `order` INT(8) NULL , `latitude` VARCHAR(64) NOT NULL , `longitude` VARCHAR(64) NOT NULL , `altitude` FLOAT(16) NOT NULL , `type` VARCHAR(64) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;

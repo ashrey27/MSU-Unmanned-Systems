@@ -1,0 +1,1 @@
+CREATE TABLE `MSUUS`.`obstacles` ( `id` INT(8) NOT NULL AUTO_INCREMENT , `type` VARCHAR(32) NOT NULL , `latitude` VARCHAR(64) NOT NULL , `longitude` VARCHAR(64) NOT NULL , `altitude` FLOAT(16) NOT NULL , `radius` FLOAT(16) NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_bin;

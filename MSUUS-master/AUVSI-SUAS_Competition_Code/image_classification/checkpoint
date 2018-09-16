@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/salvi/MSUUS/AUVSI-SUAS_Competition_Code/image_classification/shape_classifier.tfl"
+all_model_checkpoint_paths: "/home/salvi/MSUUS/AUVSI-SUAS_Competition_Code/image_classification/shape_classifier.tfl"

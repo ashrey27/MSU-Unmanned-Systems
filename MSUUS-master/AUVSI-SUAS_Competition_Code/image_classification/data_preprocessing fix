@@ -1,0 +1,14 @@
+    lib/python2.7/tflearn/dataprocessing.py
+
+    def _featurewise_zero_center(self, batch):
+        for i in range(len(batch)):
+            np.subtract(batch[i], self.global_mean.value, out=batch[i], casting="unsafe")
+                #batch[i] -= self.global_mean.value
+        return batch
+
+    def _featurewise_stdnorm(self, batch):
+        for i in range(len(batch)):
+            np.divide(batch[i], self.global_std.value + _EPSILON, out=batch[i], casting="u$
+                #batch[i] /= (self.global_std.value + _EPSILON)
+        return batch
+

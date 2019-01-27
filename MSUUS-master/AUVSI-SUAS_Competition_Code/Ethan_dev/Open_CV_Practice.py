@@ -15,6 +15,9 @@ Cf_hsv = cv2.cvtColor(Cf, cv2.COLOR_BGR2HSV)
 #plt.imshow(Cf_hsv)
 #plt.show()
 Cf_gray = cv2.cvtColor(Cf, cv2.COLOR_BGR2GRAY)
+#plt.imshow(Cf_gray)
+#plt.show()
+"""
 (thresh, im_bw) = cv2.threshold(Cf_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 #plt.imshow(im_bw, cmap='Greys_r')
 #plt.show()
@@ -32,13 +35,14 @@ dark_blue = (100, 150, 40)
 #plt.subplot(1, 2, 2)
 #plt.imshow(hsv_to_rgb(lo_square))
 #plt.show()
-mask = cv2.inRange(Cf_hsv, dark_blue, light_blue)
+mask = cv2.inRange(Cf_hsv, dark_red, light_red)
 result = cv2.bitwise_and(Cf_rgb, Cf_rgb, mask=mask)
-#plt.subplot(1, 2, 1)
-#plt.imshow(mask, cmap="gray")
-#plt.subplot(1, 2, 2)
-#plt.imshow(result)
-#plt.show()
+plt.subplot(1, 2, 1)
+plt.imshow(mask, cmap="gray")
+plt.subplot(1, 2, 2)
+plt.imshow(result)
+plt.show()
+"""
 """
 # Read image
 im = cv2.imread("clifford football.jpg", cv2.IMREAD_GRAYSCALE)
@@ -87,33 +91,41 @@ im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0, 0, 255),
 cv2.imshow("Keypoints", im_with_keypoints)
 cv2.waitKey(0)
 """
+#img = cv2.imread('image0 copy.jpg')
+#img = cv2.imread('smiley_grass_black.jpg')
+#img = cv2.imread('smiley_grass_white.jpg')
+#img = cv2.imread('Grass_pentagon.jpg')
+#img = cv2.imread('smiley_grass.jpg')
+#img = cv2.imread('Grass_big_pentagon.jpg')
+#img = cv2.imread('Grass_pentagon.jpg')
 img = cv2.imread('InkedGrass1.jpg')
 #img = cv2.imread('test copy.jpeg')
-gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+#img = cv2.imread('test_image copy.png')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
 # noise removal
-kernel = np.ones((3,3),np.uint8)
-opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = 2)
+kernel = np.ones((3, 3), np.uint8)
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
 # sure background area
-sure_bg = cv2.dilate(opening,kernel,iterations=3)
+sure_bg = cv2.dilate(opening, kernel, iterations=3)
 # Finding sure foreground area
-dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,5)
-ret, sure_fg = cv2.threshold(dist_transform,0.7*dist_transform.max(),255,0)
+dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+ret, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
 # Finding unknown region
 sure_fg = np.uint8(sure_fg)
-unknown = cv2.subtract(sure_bg,sure_fg)
-plt.imshow(unknown)
+unknown = cv2.subtract(sure_bg, sure_fg)
 # Marker labelling
 ret, markers = cv2.connectedComponents(sure_fg)
 # Add one to all labels so that sure background is not 0, but 1
 markers = markers+1
 # Now, mark the region of unknown with zero
-markers[unknown==255] = 0
-#print(markers)
+markers[unknown == 255] = 0
+markers = cv2.watershed(img, markers)
+img[markers == -1] = [255, 0, 0]
 loc = []
 for i in range(len(markers)):
     for j in range(len(markers[i])):
-        if markers[i][j] != 0:
+        if markers[i][j] == 1:
             loc.append((i, j))
 #loc = np.array([[(markers[i] != 0) for i in range(len(markers[j]))] for j in range(len(markers))])
 print(loc)
@@ -121,12 +133,10 @@ print(len(loc))
 loc.pop(0)
 x = []
 for i in range(len(loc)):
-#    if loc[i][0] > 80:
     x.append(loc[i][0])
 print(x)
 y = []
 for i in range(len(loc)):
-#    if loc[i][1] > 15:
     y.append(loc[i][1])
 print(y)
 minx = np.min(x)
@@ -137,12 +147,12 @@ print(minx)
 print(miny)
 print(maxx)
 print(maxy)
-markers = cv2.watershed(img, markers)
-img[markers == -1] = [255,0,0]  #color of markers
+ #color of markers
 #print(img[markers==-1])
 plt.imshow(img)
 plt.show()
 roi = gray[minx:maxx, miny:maxy]
-roi_rgb = cv2.cvtColor(roi, cv2.COLOR_GRAY2BGR)
+roi_rgb = cv2.cvtColor(roi, cv2.COLOR_GRAY2RGB)
 plt.imshow(roi_rgb)
 plt.show()
+

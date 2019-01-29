@@ -1,6 +1,6 @@
 def read_file(file_str):
     fir_name = []
-    sec_name = []
+    last_name = []
     
     while True:
         try:

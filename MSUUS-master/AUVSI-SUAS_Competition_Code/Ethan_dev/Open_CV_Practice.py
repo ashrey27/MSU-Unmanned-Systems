@@ -94,8 +94,8 @@ cv2.waitKey(0)
 #img = cv2.imread('image0 copy.jpg')
 #img = cv2.imread('smiley_grass_black.jpg')
 #img = cv2.imread('smiley_grass_white.jpg')
-img = cv2.imread('Grass_pentagon.jpg')
-#img = cv2.imread('smiley_grass.jpg')
+#img = cv2.imread('Grass_pentagon.jpg')
+img = cv2.imread('smiley_grass.jpg')
 #img = cv2.imread('Grass_big_pentagon.jpg')
 #img = cv2.imread('Grass_pentagon.jpg')
 #img = cv2.imread('InkedGrass1.jpg')
@@ -148,18 +148,77 @@ y = []
 for i in range(len(loc)):
     y.append(loc[i][1])
 print(y)
-minx = np.min(x)
-miny = np.min(y)
-maxx = np.max(x)
-maxy = np.max(y)
+minx = np.min(x)-3
+miny = np.min(y)-3
+maxx = np.max(x)+3
+maxy = np.max(y)+3
 print(minx)
 print(miny)
 print(maxx)
 print(maxy)
 plt.imshow(img)
 plt.show()
+img[markers == -1] = [0, 0, 0]
 roi = img[minx:maxx, miny:maxy]
 roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
 plt.imshow(roi_rgb)
 plt.show()
 
+
+#color identification:
+#red = roi_rgb[:,:,2]
+#plt.imshow(red)
+#plt.show()
+
+red_upper = np.array([180,255,255])
+red_lower = np.array([100,150,70])
+roi_hsv = cv2.cvtColor(roi_rgb, cv2.COLOR_RGB2HSV)
+mask = cv2.inRange(roi_hsv, red_lower, red_upper)
+result = cv2.bitwise_and(roi_rgb, roi_rgb, mask=mask)
+plt.subplot(1, 2, 1)
+plt.imshow(mask, cmap="gray")
+plt.subplot(1, 2, 2)
+plt.imshow(result)
+plt.show()
+
+blue_upper = np.array([255,255,180])
+blue_lower = np.array([70,150,100])
+roi_hsv = cv2.cvtColor(roi_rgb, cv2.COLOR_RGB2HSV)
+mask = cv2.inRange(roi_hsv, red_lower, red_upper)
+result = cv2.bitwise_and(roi_rgb, roi_rgb, mask=mask)
+plt.subplot(1, 2, 1)
+plt.imshow(mask, cmap="gray")
+plt.subplot(1, 2, 2)
+plt.imshow(result)
+plt.show()
+
+"""
+gray = cv2.cvtColor(roi_rgb, cv2.COLOR_BGR2GRAY)
+
+
+ret,thresh = cv2.threshold(gray,127,255,1)
+
+contours,h = cv2.findContours(thresh,1,2)
+print(contours)
+
+for cnt in contours:
+    approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+    print(len(approx))
+    if len(approx)==5:
+        print("pentagon")
+        cv2.drawContours(roi_rgb,[cnt],0,255,-1)
+    elif len(approx)==3:
+        print("triangle")
+        cv2.drawContours(roi_rgb,[cnt],0,(0,255,0),-1)
+    elif len(approx)==4:
+        print("square")
+        cv2.drawContours(roi_rgb,[cnt],0,(0,0,255),-1)
+    elif len(approx) == 9:
+        print("half-circle")
+        cv2.drawContours(roi_rgb,[cnt],0,(255,255,0),-1)
+    elif len(approx) > 15:
+        print("circle")
+        cv2.drawContours(roi_rgb,[cnt],0,(0,255,255),-1)
+plt.imshow(roi_rgb)
+plt.show()
+"""

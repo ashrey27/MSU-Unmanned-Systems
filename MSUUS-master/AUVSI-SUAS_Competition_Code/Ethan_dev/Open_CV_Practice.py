@@ -95,10 +95,9 @@ cv2.waitKey(0)
 #img = cv2.imread('image0 copy.jpg')
 #img = cv2.imread('smiley_grass_black.jpg')
 #img = cv2.imread('smiley_grass_white.jpg')
-#img = cv2.imread('Grass_pentagon.jpg')
-img = cv2.imread('smiley_grass.jpg')
+#img = cv2.imread('smiley_grass.jpg')
 #img = cv2.imread('Grass_big_pentagon.jpg')
-#img = cv2.imread('Grass_pentagon.jpg')
+img = cv2.imread('Grass_pentagon.jpg')
 #img = cv2.imread('InkedGrass1.jpg')
 #img = cv2.imread('test copy.jpeg')
 #img = cv2.imread('test_image copy.png')
@@ -112,6 +111,8 @@ rect = (50,50,450,290)
 cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 img = img*mask2[:,:,np.newaxis]
+plt.imshow(img)
+plt.show()
 
 #picks out a specific object in the image and crops out everything but that
 #code from opencv's website on watershed
@@ -137,6 +138,8 @@ markers[unknown == 255] = 0
 markers = cv2.watershed(img, markers)
 img[markers == -1] = [255, 0, 0]
 loc = []
+plt.imshow(img)
+plt.show()
 
 #performs the cropping of the image
 for i in range(len(markers)):
@@ -168,18 +171,28 @@ maxy = np.max(y)+3
 img[markers == -1] = [0, 0, 0]
 roi = img[minx:maxx, miny:maxy]
 roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-#plt.imshow(roi_rgb)
-#plt.show()
+plt.imshow(roi_rgb)
+plt.show()
 
 
 #color identification:
+"""
 red = roi_rgb[:,:,2]
 print(red.shape)
-for i in red:
-    if i[2]>=31 and i[3]>=25:
-        print(i)
+print(red[100][100])
+print(red[50][50])
+red_color_x = []
+red_color_y = []
+for i in range(red[0]):
+    for k in i:
+        if i[k]>0:
+            red_color_x.append(i)
+            red_color_y.append(i)
+print(red_color_x)
+print(red_color_y)
 plt.imshow(red)
 plt.show()
+"""
 """
 red_upper = np.array([180,255,255])
 red_lower = np.array([100,150,70])
@@ -203,18 +216,19 @@ plt.subplot(1, 2, 2)
 plt.imshow(result)
 plt.show()
 """
-"""
+
+#shape detection
 gray = cv2.cvtColor(roi_rgb, cv2.COLOR_BGR2GRAY)
 
 
 ret,thresh = cv2.threshold(gray,127,255,1)
 
 contours,h = cv2.findContours(thresh,1,2)
-print(contours)
+#print(contours)
 
 for cnt in contours:
     approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
-    print(len(approx))
+    print(approx)
     if len(approx)==5:
         print("pentagon")
         cv2.drawContours(roi_rgb,[cnt],0,255,-1)
@@ -223,13 +237,16 @@ for cnt in contours:
         cv2.drawContours(roi_rgb,[cnt],0,(0,255,0),-1)
     elif len(approx)==4:
         print("square")
-        cv2.drawContours(roi_rgb,[cnt],0,(0,0,255),-1)
+        #cv2.drawContours(roi_rgb,[cnt],0,(0,0,255),-1)
     elif len(approx) == 9:
         print("half-circle")
         cv2.drawContours(roi_rgb,[cnt],0,(255,255,0),-1)
     elif len(approx) > 15:
         print("circle")
         cv2.drawContours(roi_rgb,[cnt],0,(0,255,255),-1)
+plt.subplot(1, 2, 1)
+plt.imshow(roi_rgb)
+plt.subplot(1, 2, 2)
+roi_rgb = roi_rgb[60:80,70:90]
 plt.imshow(roi_rgb)
 plt.show()
-"""

@@ -104,7 +104,7 @@ img = cv2.imread('smiley_grass.jpg')
 #img = cv2.imread('test_image copy.png')
 #img = cv2.imread('Grass_tiles.PNG')
 
-#sets the background of ht eimage to black
+#sets the background of the image to black
 mask = np.zeros(img.shape[:2],np.uint8)
 bgdModel = np.zeros((1,65),np.float64)
 fgdModel = np.zeros((1,65),np.float64)

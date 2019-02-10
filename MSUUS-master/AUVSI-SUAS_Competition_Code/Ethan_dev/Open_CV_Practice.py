@@ -91,6 +91,7 @@ im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0, 0, 255),
 cv2.imshow("Keypoints", im_with_keypoints)
 cv2.waitKey(0)
 """
+#test images
 #img = cv2.imread('image0 copy.jpg')
 #img = cv2.imread('smiley_grass_black.jpg')
 #img = cv2.imread('smiley_grass_white.jpg')
@@ -102,6 +103,8 @@ img = cv2.imread('smiley_grass.jpg')
 #img = cv2.imread('test copy.jpeg')
 #img = cv2.imread('test_image copy.png')
 #img = cv2.imread('Grass_tiles.PNG')
+
+#sets the background of ht eimage to black
 mask = np.zeros(img.shape[:2],np.uint8)
 bgdModel = np.zeros((1,65),np.float64)
 fgdModel = np.zeros((1,65),np.float64)
@@ -110,6 +113,8 @@ cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 img = img*mask2[:,:,np.newaxis]
 
+#picks out a specific object in the image and crops out everything but that
+#code from opencv's website on watershed
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
 # noise removal
@@ -132,44 +137,50 @@ markers[unknown == 255] = 0
 markers = cv2.watershed(img, markers)
 img[markers == -1] = [255, 0, 0]
 loc = []
+
+#performs the cropping of the image
 for i in range(len(markers)):
     for j in range(len(markers[i])):
         if markers[i][j] == 1:
             loc.append((i, j))
 #loc = np.array([[(markers[i] != 0) for i in range(len(markers[j]))] for j in range(len(markers))])
-print(loc)
-print(len(loc))
+#print(loc)
+#print(len(loc))
 loc.pop(0)
 x = []
 for i in range(len(loc)):
     x.append(loc[i][0])
-print(x)
+#print(x)
 y = []
 for i in range(len(loc)):
     y.append(loc[i][1])
-print(y)
+#print(y)
 minx = np.min(x)-3
 miny = np.min(y)-3
 maxx = np.max(x)+3
 maxy = np.max(y)+3
-print(minx)
-print(miny)
-print(maxx)
-print(maxy)
-plt.imshow(img)
-plt.show()
+#print(minx)
+#print(miny)
+#print(maxx)
+#print(maxy)
+#plt.imshow(img)
+#plt.show()
 img[markers == -1] = [0, 0, 0]
 roi = img[minx:maxx, miny:maxy]
 roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-plt.imshow(roi_rgb)
-plt.show()
+#plt.imshow(roi_rgb)
+#plt.show()
 
 
 #color identification:
-#red = roi_rgb[:,:,2]
-#plt.imshow(red)
-#plt.show()
-
+red = roi_rgb[:,:,2]
+print(red.shape)
+for i in red:
+    if i[2]>=31 and i[3]>=25:
+        print(i)
+plt.imshow(red)
+plt.show()
+"""
 red_upper = np.array([180,255,255])
 red_lower = np.array([100,150,70])
 roi_hsv = cv2.cvtColor(roi_rgb, cv2.COLOR_RGB2HSV)
@@ -191,7 +202,7 @@ plt.imshow(mask, cmap="gray")
 plt.subplot(1, 2, 2)
 plt.imshow(result)
 plt.show()
-
+"""
 """
 gray = cv2.cvtColor(roi_rgb, cv2.COLOR_BGR2GRAY)
 

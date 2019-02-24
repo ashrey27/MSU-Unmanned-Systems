@@ -178,7 +178,6 @@ plt.subplot(1, 2, 2)
 plt.imshow(roi_rgb_1)
 plt.show()
 
-
 #color identification:
 """
 red = roi_rgb[:,:,2]

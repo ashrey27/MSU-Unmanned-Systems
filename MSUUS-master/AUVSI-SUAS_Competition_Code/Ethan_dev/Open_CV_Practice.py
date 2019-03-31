@@ -3,6 +3,36 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
+"""
+sexton_tshirt = cv2.imread('Sexton_Tshirt_logo.PNG')
+sexton_banner = cv2.imread('Sexton_banner_logo.PNG')
+sexton_banner_rgb = cv2.cvtColor(sexton_banner, cv2.COLOR_BGR2RGB)
+sexton_tshirt_rgb = cv2.cvtColor(sexton_tshirt, cv2.COLOR_BGR2RGB)
+
+red_upper = np.array([256, 256, 256])
+red_lower = np.array([50, 0, 0])
+
+mask = cv2.inRange(sexton_banner_rgb, red_lower, red_upper)
+print(sexton_banner_rgb[360][1600])
+print(sexton_banner_rgb[36][1533])
+print(mask[36][1533])
+for i in range(len(mask)):
+    for j in range(len(mask[i])):
+        if mask[i][j] == 0:
+            sexton_banner[i][j] = [255, 0, 0]
+        else:
+            sexton_banner[i][j] = [0, 0, 0]
+
+mask = cv2.inRange(sexton_tshirt_rgb, red_lower, red_upper)
+print(sexton_tshirt_rgb[5][1335])
+print(sexton_tshirt_rgb[558][1101])
+print(mask[558][1101])
+for i in range(len(mask)):
+    for j in range(len(mask[i])):
+        if mask[i][j] == 0:
+            sexton_tshirt[i][j] = [255, 0, 0]
+        else:
+            sexton_tshirt[i][j] = [0, 0, 0]
 
 Cf = cv2.imread('clifford football.jpg')
 Grass = cv2.imread('Grass1.png',0)
@@ -17,6 +47,7 @@ Cf_hsv = cv2.cvtColor(Cf, cv2.COLOR_BGR2HSV)
 Cf_gray = cv2.cvtColor(Cf, cv2.COLOR_BGR2GRAY)
 #plt.imshow(Cf_gray)
 #plt.show()
+"""
 """
 (thresh, im_bw) = cv2.threshold(Cf_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 #plt.imshow(im_bw, cmap='Greys_r')
@@ -91,93 +122,105 @@ img = cv2.imread('Grass1_2_red_square.jpg')
 #img = cv2.imread('test copy.jpeg')
 #img = cv2.imread('test_image copy.png')
 #img = cv2.imread('Grass_tiles.PNG')
+img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-#sets the background of the image to black
-mask = np.zeros(img.shape[:2],np.uint8)
-bgdModel = np.zeros((1,65),np.float64)
-fgdModel = np.zeros((1,65),np.float64)
-rect = (50,50,450,290)
-cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
-mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
-img = img*mask2[:,:,np.newaxis]
-plt.imshow(img)
-plt.show()
+def crop_img(img):
+    plt.imshow(img)
+    plt.show()
+    #sets the background of the image to black
+    mask = np.zeros(img.shape[:2],np.uint8)
+    bgdModel = np.zeros((1,65),np.float64)
+    fgdModel = np.zeros((1,65),np.float64)
+    rect = (50,50,450,290)
+    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+    mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+    img = img*mask2[:,:,np.newaxis]
+    plt.imshow(img)
+    #plt.show()
 
-#picks out a specific object in the image and crops out everything but that
-#code from opencv's website on watershed
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-# noise removal
-kernel = np.ones((3, 3), np.uint8)
-opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
-# sure background area
-sure_bg = cv2.dilate(opening, kernel, iterations=3)
-# Finding sure foreground area
-dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
-ret, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
-# Finding unknown region
-sure_fg = np.uint8(sure_fg)
-unknown = cv2.subtract(sure_bg, sure_fg)
-# Marker labelling
-ret, markers = cv2.connectedComponents(sure_fg)
-# Add one to all labels so that sure background is not 0, but 1
-markers = markers+1
-# Now, mark the region of unknown with zero
-markers[unknown == 255] = 0
-markers = cv2.watershed(img, markers)
-img[markers == -1] = [255, 0, 0]
-loc = []
-plt.imshow(img)
-plt.show()
+    #picks out a specific object in the image and crops out everything but that
+    #code from opencv's website on watershed
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    # noise removal
+    kernel = np.ones((3, 3), np.uint8)
+    opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+    # sure background area
+    sure_bg = cv2.dilate(opening, kernel, iterations=3)
+    # Finding sure foreground area
+    dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+    ret, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
+    # Finding unknown region
+    sure_fg = np.uint8(sure_fg)
+    unknown = cv2.subtract(sure_bg, sure_fg)
+    # Marker labelling
+    ret, markers = cv2.connectedComponents(sure_fg)
+    # Add one to all labels so that sure background is not 0, but 1
+    markers = markers+1
+    # Now, mark the region of unknown with zero
+    markers[unknown == 255] = 0
+    markers = cv2.watershed(img, markers)
+    img[markers == -1] = [255, 255, 255]
+    loc = []
+    plt.imshow(img)
+    plt.show()
 
-#performs the cropping of the image
-for i in range(len(markers)):
-    for j in range(len(markers[i])):
-        if markers[i][j] == 1:
-            loc.append((i, j))
-#loc = np.array([[(markers[i] != 0) for i in range(len(markers[j]))] for j in range(len(markers))])
-#print(loc)
-#print(len(loc))
-loc.pop(0)
-x = []
-for i in range(len(loc)):
-    x.append(loc[i][0])
-#print(x)
-y = []
-for i in range(len(loc)):
-    y.append(loc[i][1])
-#print(y)
-minx = np.min(x)-3
-miny = np.min(y)-3
-maxx = np.max(x)+3
-maxy = np.max(y)+3
-#print(minx)
-#print(miny)
-#print(maxx)
-#print(maxy)
-#plt.imshow(img)
-#plt.show()
-img[markers == -1] = [0, 0, 0]
-roi = img[minx:maxx, miny:maxy]
-roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-plt.imshow(roi_rgb)
-plt.show()
+    #performs the cropping of the image
+    for i in range(len(markers)):
+        for j in range(len(markers[i])):
+            if markers[i][j] == 1:
+                loc.append((i, j))
+    loc.pop(0)
+    x = []
+    for i in range(len(loc)):
+        x.append(loc[i][0])
+    y = []
+    for i in range(len(loc)):
+        y.append(loc[i][1])
+    minx = np.min(x)-3
+    miny = np.min(y)-3
+    maxx = np.max(x)+3
+    maxy = np.max(y)+3
+    img[markers == -1] = [0, 0, 0]
+    roi = img[minx:maxx, miny:maxy]
+    roi_rgb = roi
+    #roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+    plt.imshow(roi_rgb)
+    plt.show()
 
-i = 0
-j = 0
-while i < len(x)-1 and j < len(y)-1:
-    if abs(x[i]-x[i+1]) > 3 or abs(y[i]-y[i+1]) > 3:
-        roi_rgb_1 = roi_rgb[0:int((x[i]+x[i+1])/2), 0:int((y[i]+y[i+1])/2)]
-        roi_rgb = roi_rgb[int((x[i]+x[i+1])/2):maxx, int((y[i]+y[i+1])/2):maxy]
-        break
-    i += 1
-    j += 1
-plt.subplot(1, 2, 1)
-plt.imshow(roi_rgb)
-plt.subplot(1, 2, 2)
-plt.imshow(roi_rgb_1)
-plt.show()
+    #splits image to look for more objects
+    i = 0
+    j = 0
+    img_list = []
+    while i < len(x)-1 and j < len(y)-1:
+        if abs(x[i]-x[i+1]) > 3 or abs(y[i]-y[i+1]) > 3:
+            roi_rgb_1 = roi_rgb[0:int((x[i]+x[i+1])/2)+4, 0:int((y[i]+y[i+1])/2)+4]
+            roi_rgb = roi_rgb[int((x[i]+x[i+1])/2)+4:maxx, int((y[i]+y[i+1])/2)+4:maxy]
+            cv2.imwrite("roi_rgb.jpg",roi_rgb)
+            cv2.imwrite("roi_rgb_1.jpg",roi_rgb_1)
+            img_list.append(roi_rgb)
+            img_list.append(roi_rgb_1)
+            break
+        i += 1
+        j += 1
+    print(roi_rgb.shape)
+    print(roi_rgb_1.shape)
+    plt.subplot(1, 2, 1)
+    plt.imshow(roi_rgb)
+    plt.subplot(1, 2, 2)
+    plt.imshow(roi_rgb_1)
+    plt.show()
+    crop_img(cv2.imread("roi_rgb.jpg"))
+    crop_img(cv2.imread("roi_rgb_1.jpg"))
+    if i == len(x)-1 and j == len(y)-1:
+        return img_list
 
+
+
+list_img = crop_img(img)
+for i in range(len(list_img)):
+    plt.subplot(1, len(list_img), i+1)
+    plt.imshow(list_img[i])
 #color identification:
 """
 red = roi_rgb[:,:,2]

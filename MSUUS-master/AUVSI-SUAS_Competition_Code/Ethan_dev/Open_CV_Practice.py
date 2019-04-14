@@ -3,113 +3,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
-"""
-sexton_tshirt = cv2.imread('Sexton_Tshirt_logo.PNG')
-sexton_banner = cv2.imread('Sexton_banner_logo.PNG')
-sexton_banner_rgb = cv2.cvtColor(sexton_banner, cv2.COLOR_BGR2RGB)
-sexton_tshirt_rgb = cv2.cvtColor(sexton_tshirt, cv2.COLOR_BGR2RGB)
-
-red_upper = np.array([256, 256, 256])
-red_lower = np.array([50, 0, 0])
-
-mask = cv2.inRange(sexton_banner_rgb, red_lower, red_upper)
-print(sexton_banner_rgb[360][1600])
-print(sexton_banner_rgb[36][1533])
-print(mask[36][1533])
-for i in range(len(mask)):
-    for j in range(len(mask[i])):
-        if mask[i][j] == 0:
-            sexton_banner[i][j] = [255, 0, 0]
-        else:
-            sexton_banner[i][j] = [0, 0, 0]
-
-mask = cv2.inRange(sexton_tshirt_rgb, red_lower, red_upper)
-print(sexton_tshirt_rgb[5][1335])
-print(sexton_tshirt_rgb[558][1101])
-print(mask[558][1101])
-for i in range(len(mask)):
-    for j in range(len(mask[i])):
-        if mask[i][j] == 0:
-            sexton_tshirt[i][j] = [255, 0, 0]
-        else:
-            sexton_tshirt[i][j] = [0, 0, 0]
-
-Cf = cv2.imread('clifford football.jpg')
-Grass = cv2.imread('Grass1.png',0)
-#plt.imshow(Cf)
-#plt.show()
-Cf_rgb = cv2.cvtColor(Cf, cv2.COLOR_BGR2RGB)
-#plt.imshow(Cf_rgb)
-#plt.show()
-Cf_hsv = cv2.cvtColor(Cf, cv2.COLOR_BGR2HSV)
-#plt.imshow(Cf_hsv)
-#plt.show()
-Cf_gray = cv2.cvtColor(Cf, cv2.COLOR_BGR2GRAY)
-#plt.imshow(Cf_gray)
-#plt.show()
-"""
-"""
-(thresh, im_bw) = cv2.threshold(Cf_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-#plt.imshow(im_bw, cmap='Greys_r')
-#plt.show()
-light_red = (190, 255, 255)
-dark_red = (160, 160, 150)
-light_green = (100, 250, 170)
-dark_green = (50, 150, 100)
-light_blue = (200, 255, 100)
-dark_blue = (100, 150, 40)
-#lo_square = np.full((10, 10, 3), light_green, dtype=np.uint8) / 255.0
-#do_square = np.full((10, 10, 3), dark_green, dtype=np.uint8) / 255.0
-#plt.subplot(1, 2, 1)
-#plt.imshow(hsv_to_rgb(do_square))
-#plt.subplot(1, 2, 2)
-#plt.imshow(hsv_to_rgb(lo_square))
-#plt.show()
-mask = cv2.inRange(Cf_hsv, dark_red, light_red)
-result = cv2.bitwise_and(Cf_rgb, Cf_rgb, mask=mask)
-plt.subplot(1, 2, 1)
-plt.imshow(mask, cmap="gray")
-plt.subplot(1, 2, 2)
-plt.imshow(result)
-plt.show()
-"""
-"""
-# Read image
-im = cv2.imread("clifford football.jpg", cv2.IMREAD_GRAYSCALE)
-# Setup SimpleBlobDetector parameters.
-params = cv2.SimpleBlobDetector_Params()
-# Change thresholds
-params.minThreshold = 10
-params.maxThreshold = 200
-# Filter by Area.
-params.filterByArea = True
-params.minArea = 950
-# Filter by Circularity
-params.filterByCircularity = False
-params.minCircularity = 0.1
-# Filter by Convexity
-params.filterByConvexity = False
-params.minConvexity = 0.87
-# Filter by Inertia
-params.filterByInertia = False
-params.minInertiaRatio = 0.01
-# Create a detector with the parameters
-ver = (cv2.__version__).split('.')
-if int(ver[0]) < 3:
-    detector = cv2.SimpleBlobDetector(params)
-else:
-    detector = cv2.SimpleBlobDetector_create(params)
-# Detect blobs.
-keypoints = detector.detect(im)
-# Draw detected blobs as red circles.
-# cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures
-# the size of the circle corresponds to the size of blob
-im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0, 0, 255),
-                                      cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-# Show blobs
-cv2.imshow("Keypoints", im_with_keypoints)
-cv2.waitKey(0)
-"""
 #test images
 #img = cv2.imread('image0 copy.jpg')
 #img = cv2.imread('smiley_grass_black.jpg')
@@ -122,9 +15,21 @@ img = cv2.imread('Grass_pentagon.jpg')
 #img = cv2.imread('test copy.jpeg')
 #img = cv2.imread('test_image copy.png')
 #img = cv2.imread('Grass_tiles.PNG')
+#img = cv2.imread('DSC00342.JPG')
+#img = cv2.imread('DSC00343.JPG')
+#img = cv2.imread('DSC00344.JPG')
+#img = cv2.imread('DSC00345.JPG')
+#img = cv2.imread('DSC00346.JPG')
+#img = cv2.imread('DSC00347.JPG')
+#img = cv2.imread('DSC00348.JPG')
+#img = cv2.imread('DSC00349.JPG')
+#img = cv2.imread('DSC00350.JPG')
+#img = cv2.imread('DSC00351.JPG')
+#img = cv2.imread('597.jpg')
 img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
 def crop_img(img,indx,done=False):
+
     if done is False:
         plt.imshow(img)
         plt.show()
@@ -142,7 +47,7 @@ def crop_img(img,indx,done=False):
     #picks out a specific object in the image and crops out everything but that
     #code from opencv's website on watershed
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    ret, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
     # noise removal
     kernel = np.ones((3, 3), np.uint8)
     opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
@@ -171,7 +76,7 @@ def crop_img(img,indx,done=False):
         for j in range(len(markers[i])):
             if markers[i][j] == 1:
                 loc.append((i, j))
-    if len(loc)>1:
+    if len(loc) > 1:
         loc.pop(0)
         x = []
         for i in range(len(loc)):
@@ -183,11 +88,14 @@ def crop_img(img,indx,done=False):
         miny = np.min(y)-3
         maxx = np.max(x)+3
         maxy = np.max(y)+3
-        img[markers == -1] = [0, 0, 0]
+        img[markers == -1] = [255, 0, 0]
+        plt.imshow(img)
+        plt.show()
         roi = img[minx:maxx, miny:maxy]
         #roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
         plt.imshow(roi)
         plt.show()
+        cv2.imwrite("roi.jpg",roi)
 """
     #splits image to look for more objects
     i = 0
@@ -230,98 +138,35 @@ def crop_img(img,indx,done=False):
         k += 1
     crop_img(roi,0,True)
     """
-"""
-    i = 0
-    j = 0
-    img_list = []
-    if len(loc) < 1 or np.min(x) < 4 or np.min(y) < 4:
-        return img_list
-    print(x)
-    print(y)
-    while i < len(x)-1 and j < len(y)-1:
-        if abs(x[i]-x[i+1]) > 3 or abs(y[i]-y[i+1]) > 3:
-            roi_rgb_1 = roi_rgb[0:int((x[i]+x[i+1])/2)+3, 0:int((y[i]+y[i+1])/2)+3]
-            roi_rgb = roi_rgb[int((x[i]+x[i+1])/2)+3:maxx, int((y[i]+y[i+1])/2)+3:maxy]
-            name1 = "roi_rgb_"+str(indx)+".jpg"
-            indx += 1
-            name2 = "roi_rgb_"+str(indx)+".jpg"
-            indx += 1
-            cv2.imwrite(name1,roi_rgb)
-            cv2.imwrite(name2,roi_rgb_1)
-            img_list.append(roi_rgb)
-            img_list.append(roi_rgb_1)
-            break
-        i += 1
-        j += 1
-    print(roi_rgb.shape)
-    print(roi_rgb_1.shape)
-    plt.subplot(1, 2, 1)
-    plt.imshow(roi_rgb)
-    plt.subplot(1, 2, 2)
-    plt.imshow(roi_rgb_1)
-    plt.show()
-    img_list_1 = crop_img(cv2.imread(name1),indx, True)
-    img_list_2 = crop_img(cv2.imread(name2),indx, True)
-    img_list.append(img_list_1)
-    print(img_list)
-    img_list.append(img_list_2)
-    print(img_list)
-    return img_list
-    """
 
 
-
-list_img = np.array(crop_img(img,0))
+crop_img(img,0)
+roi = cv2.imread("roi.jpg",cv2.COLOR_BGR2RGB)
 
 #color identification:
-"""
-red = roi_rgb[:,:,2]
-print(red.shape)
-print(red[100][100])
-print(red[50][50])
+
+red = roi[:,:,2]
 red_color_x = []
 red_color_y = []
 for i in range(red[0]):
     for k in i:
-        if i[k]>0:
+        if i[k] > 0:
             red_color_x.append(i)
             red_color_y.append(i)
 print(red_color_x)
 print(red_color_y)
 plt.imshow(red)
 plt.show()
-"""
-"""
-red_upper = np.array([180,255,255])
-red_lower = np.array([100,150,70])
-roi_hsv = cv2.cvtColor(roi_rgb, cv2.COLOR_RGB2HSV)
-mask = cv2.inRange(roi_hsv, red_lower, red_upper)
-result = cv2.bitwise_and(roi_rgb, roi_rgb, mask=mask)
-plt.subplot(1, 2, 1)
-plt.imshow(mask, cmap="gray")
-plt.subplot(1, 2, 2)
-plt.imshow(result)
-plt.show()
-blue_upper = np.array([255,255,180])
-blue_lower = np.array([70,150,100])
-roi_hsv = cv2.cvtColor(roi_rgb, cv2.COLOR_RGB2HSV)
-mask = cv2.inRange(roi_hsv, red_lower, red_upper)
-result = cv2.bitwise_and(roi_rgb, roi_rgb, mask=mask)
-plt.subplot(1, 2, 1)
-plt.imshow(mask, cmap="gray")
-plt.subplot(1, 2, 2)
-plt.imshow(result)
-plt.show()
-"""
 
 #shape detection
-"""
-gray = cv2.cvtColor(roi_rgb, cv2.COLOR_BGR2GRAY)
+
+gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
 
 
 ret,thresh = cv2.threshold(gray,127,255,1)
 
-contours,h = cv2.findContours(thresh,1,2)
+print(len(cv2.findContours(thresh,1,2)))
+contours = cv2.findContours(thresh,1,2)
 #print(contours)
 
 for cnt in contours:
@@ -329,23 +174,22 @@ for cnt in contours:
     print(approx)
     if len(approx)==5:
         print("pentagon")
-        cv2.drawContours(roi_rgb,[cnt],0,255,-1)
+        cv2.drawContours(roi,[cnt],0,255,-1)
     elif len(approx)==3:
         print("triangle")
-        cv2.drawContours(roi_rgb,[cnt],0,(0,255,0),-1)
+        cv2.drawContours(roi,[cnt],0,(0,255,0),-1)
     elif len(approx)==4:
         print("square")
         #cv2.drawContours(roi_rgb,[cnt],0,(0,0,255),-1)
     elif len(approx) == 9:
         print("half-circle")
-        cv2.drawContours(roi_rgb,[cnt],0,(255,255,0),-1)
+        cv2.drawContours(roi,[cnt],0,(255,255,0),-1)
     elif len(approx) > 15:
         print("circle")
-        cv2.drawContours(roi_rgb,[cnt],0,(0,255,255),-1)
+        cv2.drawContours(roi,[cnt],0,(0,255,255),-1)
 plt.subplot(1, 2, 1)
-plt.imshow(roi_rgb)
+plt.imshow(roi)
 plt.subplot(1, 2, 2)
-roi_rgb = roi_rgb[60:80,70:90]
+roi_rgb = roi[60:80,70:90]
 plt.imshow(roi_rgb)
 plt.show()
-"""

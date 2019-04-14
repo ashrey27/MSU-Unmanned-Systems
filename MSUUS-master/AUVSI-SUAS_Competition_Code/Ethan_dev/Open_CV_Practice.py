@@ -116,27 +116,28 @@ cv2.waitKey(0)
 #img = cv2.imread('smiley_grass_white.jpg')
 #img = cv2.imread('smiley_grass.jpg')
 #img = cv2.imread('Grass_big_pentagon.jpg')
-#img = cv2.imread('Grass_pentagon.jpg')
-img = cv2.imread('Grass1_2_red_square.jpg')
+img = cv2.imread('Grass_pentagon.jpg')
+#img = cv2.imread('Grass1_2_red_square.jpg')
 #img = cv2.imread('InkedGrass1.jpg')
 #img = cv2.imread('test copy.jpeg')
 #img = cv2.imread('test_image copy.png')
 #img = cv2.imread('Grass_tiles.PNG')
 img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-def crop_img(img):
-    plt.imshow(img)
-    plt.show()
-    #sets the background of the image to black
-    mask = np.zeros(img.shape[:2],np.uint8)
-    bgdModel = np.zeros((1,65),np.float64)
-    fgdModel = np.zeros((1,65),np.float64)
-    rect = (50,50,450,290)
-    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
-    mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
-    img = img*mask2[:,:,np.newaxis]
-    plt.imshow(img)
-    #plt.show()
+def crop_img(img,indx,done=False):
+    if done is False:
+        plt.imshow(img)
+        plt.show()
+        #sets the background of the image to black
+        mask = np.zeros(img.shape[:2],np.uint8)
+        bgdModel = np.zeros((1,65),np.float64)
+        fgdModel = np.zeros((1,65),np.float64)
+        rect = (50,50,450,290)
+        cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+        mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+        img = img*mask2[:,:,np.newaxis]
+        plt.imshow(img)
+        #plt.show()
 
     #picks out a specific object in the image and crops out everything but that
     #code from opencv's website on watershed
@@ -170,34 +171,83 @@ def crop_img(img):
         for j in range(len(markers[i])):
             if markers[i][j] == 1:
                 loc.append((i, j))
-    loc.pop(0)
-    x = []
-    for i in range(len(loc)):
-        x.append(loc[i][0])
-    y = []
-    for i in range(len(loc)):
-        y.append(loc[i][1])
-    minx = np.min(x)-3
-    miny = np.min(y)-3
-    maxx = np.max(x)+3
-    maxy = np.max(y)+3
-    img[markers == -1] = [0, 0, 0]
-    roi = img[minx:maxx, miny:maxy]
-    roi_rgb = roi
-    #roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-    plt.imshow(roi_rgb)
-    plt.show()
-
+    if len(loc)>1:
+        loc.pop(0)
+        x = []
+        for i in range(len(loc)):
+            x.append(loc[i][0])
+        y = []
+        for i in range(len(loc)):
+            y.append(loc[i][1])
+        minx = np.min(x)-3
+        miny = np.min(y)-3
+        maxx = np.max(x)+3
+        maxy = np.max(y)+3
+        img[markers == -1] = [0, 0, 0]
+        roi = img[minx:maxx, miny:maxy]
+        #roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+        plt.imshow(roi)
+        plt.show()
+"""
     #splits image to look for more objects
     i = 0
     j = 0
+    x = x-minx
+    y = y-miny
+    xmin2 = np.min(x)
+    ymin2 = np.min(y)
+    xmax2 = xmin2
+    ymax2 = ymin2
+    while (x[i]-x[i+1]) < 4 and i < len(x)-2:
+        xmax2 = x[i]
+        i += 1
+    xmin2 = minx
+
+    while (y[j]-y[j+1]) < 4 and j < len(y)-2:
+        ymax2 = y[j]
+        j += 1
+    ymin2 = miny
+    print(y[j])
+    print(x[i])
+    print(xmin2)
+    print(xmax2)
+    print(ymin2)
+    print(ymax2)
+    img1 = roi[minx:xmax2, miny:ymax2]
+    cv2.imwrite("output1.jpg",img1)
+    plt.imshow(img1)
+    plt.show()
+    k = xmin2
+    l = ymin2
+    #print(len(roi_rgb[0][:]))
+    #print(len(roi_rgb[:][0]))
+    while k < xmax2:
+        while l < ymax2:
+            #print(k,l)
+            roi[k,l] = [0,0,0]
+            l += 1
+        l = ymin2
+        k += 1
+    crop_img(roi,0,True)
+    """
+"""
+    i = 0
+    j = 0
     img_list = []
+    if len(loc) < 1 or np.min(x) < 4 or np.min(y) < 4:
+        return img_list
+    print(x)
+    print(y)
     while i < len(x)-1 and j < len(y)-1:
         if abs(x[i]-x[i+1]) > 3 or abs(y[i]-y[i+1]) > 3:
-            roi_rgb_1 = roi_rgb[0:int((x[i]+x[i+1])/2)+4, 0:int((y[i]+y[i+1])/2)+4]
-            roi_rgb = roi_rgb[int((x[i]+x[i+1])/2)+4:maxx, int((y[i]+y[i+1])/2)+4:maxy]
-            cv2.imwrite("roi_rgb.jpg",roi_rgb)
-            cv2.imwrite("roi_rgb_1.jpg",roi_rgb_1)
+            roi_rgb_1 = roi_rgb[0:int((x[i]+x[i+1])/2)+3, 0:int((y[i]+y[i+1])/2)+3]
+            roi_rgb = roi_rgb[int((x[i]+x[i+1])/2)+3:maxx, int((y[i]+y[i+1])/2)+3:maxy]
+            name1 = "roi_rgb_"+str(indx)+".jpg"
+            indx += 1
+            name2 = "roi_rgb_"+str(indx)+".jpg"
+            indx += 1
+            cv2.imwrite(name1,roi_rgb)
+            cv2.imwrite(name2,roi_rgb_1)
             img_list.append(roi_rgb)
             img_list.append(roi_rgb_1)
             break
@@ -210,17 +260,19 @@ def crop_img(img):
     plt.subplot(1, 2, 2)
     plt.imshow(roi_rgb_1)
     plt.show()
-    crop_img(cv2.imread("roi_rgb.jpg"))
-    crop_img(cv2.imread("roi_rgb_1.jpg"))
-    if i == len(x)-1 and j == len(y)-1:
-        return img_list
+    img_list_1 = crop_img(cv2.imread(name1),indx, True)
+    img_list_2 = crop_img(cv2.imread(name2),indx, True)
+    img_list.append(img_list_1)
+    print(img_list)
+    img_list.append(img_list_2)
+    print(img_list)
+    return img_list
+    """
 
 
 
-list_img = crop_img(img)
-for i in range(len(list_img)):
-    plt.subplot(1, len(list_img), i+1)
-    plt.imshow(list_img[i])
+list_img = np.array(crop_img(img,0))
+
 #color identification:
 """
 red = roi_rgb[:,:,2]

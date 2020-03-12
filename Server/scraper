@@ -1,0 +1,10 @@
+#!/bin/tcsh -f
+
+set counter = 1
+
+wget -nc -r -np www.msu.edu/
+#while ($counter <= 10)
+#	# sleep 10
+#	wget -nc -r -np www.cse.msu.edu/~cse325/Lectures/
+#	@ counter++
+#end

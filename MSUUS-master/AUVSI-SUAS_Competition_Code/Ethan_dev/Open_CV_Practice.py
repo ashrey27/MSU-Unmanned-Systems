@@ -147,31 +147,31 @@ redlower = [75, 0, 0]
 
 #highest r w/ high g & low b
 orangeupper = [255, 200, 95]
-orangelower = [171, 111, 0]
+orangelower = [170, 110, 0]
 
 #highest r w/ almost equal g
-yellowupper = [255, 253, 153]
-yellowlower = [212, 208, 0]
+yellowupper = [255, 255, 155]
+yellowlower = [210, 208, 0]
 
 #highest g w/ higher r & middle b
 greenupper = [175, 255, 150]
 greenlower = [15, 60, 0]
 
 #highest b w/ almost equal g
-cyanupper = [175, 248, 255]
+cyanupper = [175, 250, 255]
 cyanlower = [0, 75, 80]
 
 #highest b w/ low r and g
-blueupper = [51, 51, 255]
-bluelower = [0, 0, 207]
+blueupper = [55, 55, 255]
+bluelower = [0, 0, 205]
 
 #highest b w/ high r
-purpleupper =[207, 171, 255]
+purpleupper =[210, 175, 255]
 purplelower = [25, 0, 60]
 
 #highest r w/ almost equal b
-pinkupper = [255, 196, 253]
-pinklower = [207, 0, 200]
+pinkupper = [255, 200, 255]
+pinklower = [210, 0, 200]
 
 #shape color
 if (averager <= redupper[0] and averager >= redlower[0]) and (averageg <= redupper[1] and averageg >= redlower[1]) and (averageb <= redupper[2] and averageb >= redlower[2]):

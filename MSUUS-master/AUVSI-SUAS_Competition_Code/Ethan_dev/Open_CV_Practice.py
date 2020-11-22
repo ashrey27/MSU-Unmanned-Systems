@@ -20,8 +20,8 @@ import math
 #img = cv2.imread('DSC00343.JPG') # yellow w/ black letter
 #img = cv2.imread('DSC00344.JPG') # blue w/ yellow letter
 #img = cv2.imread('DSC00345.JPG') # blue w/ black letter
-#img = cv2.imread('DSC00346.JPG') # lavendar w/ orange letter
-img = cv2.imread('DSC00347.JPG') # red w/ black letter
+img = cv2.imread('DSC00346.JPG') # lavendar w/ orange letter
+#img = cv2.imread('DSC00347.JPG') # red w/ black letter
 #img = cv2.imread('DSC00348.JPG')
 #img = cv2.imread('DSC00349.JPG')
 #img = cv2.imread('DSC00350.JPG')
@@ -101,7 +101,7 @@ for i in range(1, int(len(roi) / 5)):
         #print(roi[5*i, k, 0])
         if roi[5*i, 5*k, 0] != 0 or roi[5*i, 5*k, 1] != 0 or roi[5*i, 5*k, 2] != 0:
             pixels.append(list(roi[5*i, 5*k]))
-print(pixels)
+#print(pixels)
 
 sumr = 0
 for i in pixels:
@@ -123,23 +123,23 @@ letterPixels = []
 for i in pixels:
     if (i[0] > averager + 20 or i[0] < averager - 20) and (i[1] > averageg + 20 or i[1] < averageg - 20) and (i[2] > averageb + 20 or i[2] < averageb - 20):
         letterPixels.append(i)
-print(letterPixels)
+#print(letterPixels)
 
 letterSumr = 0
 for i in letterPixels:
     letterSumr += i[0]
 letterAverager = letterSumr / len(letterPixels)
-print(letterAverager)
+print("red letter average = ", letterAverager)
 letterSumg = 0
 for i in letterPixels:
     letterSumg += i[1]
 letterAverageg = letterSumg / len(letterPixels)
-print(letterAverageg)
+print("green letter average = ", letterAverageg)
 letterSumb = 0
 for i in letterPixels:
     letterSumb += i[2]
 letterAverageb = letterSumb / len(letterPixels)
-print(letterAverageb)
+print("blue letter average = ", letterAverageb)
 
 #highest r w/ low g&b
 redupper = [255, 120, 120]
